@@ -23,4 +23,4 @@ Hello.defaultProps = {
 };
 
 // Hello라는 component를 내보내 주겠다.
-export default Hello;
+export default React.memo(Hello);

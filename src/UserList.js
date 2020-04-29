@@ -1,38 +1,47 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-function User({ user }) {
+const User = React.memo(({ user, onRemove, onToggle }) => {
+  useEffect(() => {
+    console.log('컴포넌트가 화면에 나타남');
+    console.log(user);
+    return () => {
+      console.log('컴포넌트가 화면에서 사라짐');
+    };
+  }, [user]);
   return (
     <div>
-      <b>{user.username}</b> <span>({user.email})</span>
+      <b
+        style={{
+          cursor: 'pointer',
+          color: user.active ? 'green' : 'black',
+        }}
+        onClick={() => onToggle(user.id)}
+      >
+        {user.username}
+      </b>
+      &nbsp;
+      <span>({user.email})</span>
+      <button onClick={() => onRemove(user.id)}>삭제</button>
     </div>
   );
-}
+});
 
-function UserList() {
-  const users = [
-    {
-      id: 1,
-      username: 'velopert',
-      email: 'public.velopert@gmail.com',
-    },
-    {
-      id: 2,
-      username: 'tester',
-      email: 'tester@example.com',
-    },
-    {
-      id: 3,
-      username: 'liz',
-      email: 'liz@example.com',
-    },
-  ];
+function UserList({ users, onRemove, onToggle }) {
   return (
     <div>
       {users.map((user) => (
-        <User key={user.id} user={user} />
+        <User
+          user={user}
+          key={user.id}
+          onRemove={onRemove}
+          onToggle={onToggle}
+        />
       ))}
     </div>
   );
 }
-
-export default UserList;
+//prevProps랑 nextProps의 users를 비교해서 같다면 리렌더링 하지 않겠다.
+export default React.memo(
+  UserList,
+  (prevProps, nextProps) => prevProps.users === nextProps.users
+);
